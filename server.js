@@ -1,9 +1,8 @@
 var express = require('express');
-var io = require('socket.io')(http);
-var request = require('request');
-
 var app = express();
 var http = require('http').Server(app);
+var io = require('socket.io')(http);
+var request = require('request');
 
 const VERIFY_TOKEN = Math.random().toString(36).substring(2);
 
