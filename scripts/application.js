@@ -10,7 +10,9 @@ var tag = null;
 const IntervalTime = 5000;
 const MaxImages = 100;
 
-$('form').submit(function() {
+document.getElementsByTagName('form')[0].addEventListener('submit', function(e) {
+  e.preventDefault();
+
   if (interval) {
     clearInterval(interval);
     socket.emit('delete subscription', subscriptionId);
@@ -21,15 +23,30 @@ $('form').submit(function() {
 
   tag = $('#hash_input').val();
 
-  getImages();
-  makeSubscription();
+  if (tag) {
+    getImages();
+    makeSubscription();    
+  } else {
+    $('img').fadeOut('slow');
+    $('#ig_text').fadeOut('slow');
+  }
+});
 
-  return false;
+document.getElementsByTagName('img')[0].addEventListener('click', function(e) {
+  if (this.requestFullScreen) {
+    this.requestFullScreen();
+  } else if (this.msRequestFullscreen) {
+    this.msRequestFullscreen();
+  } else if (this.mozRequestFullScreen) {
+    this.mozRequestFullScreen();
+  } else if (this.webkitRequestFullscreen) {
+    this.webkitRequestFullscreen();
+  }
 });
 
 socket.on('new images', response => { getImages(null, minTagId) });
 
-$(window).bind('beforeunload', () => { socket.emit('delete subscription', subscriptionId) });
+window.onbeforeunload = () => { socket.emit('delete subscription', subscriptionId) };
 
 function getImages(url, minId) {
   var data = {tag: tag};
@@ -80,11 +97,13 @@ function showNextMediaItem() {
 
 function showItemAtIndex(index) {
   var mediaItem = mediaItems[index];
-  $('#js-photo').fadeOut('slow', function() {
-    $(this).empty().append('<img src=' + mediaItem.url + '>');
-  }).fadeIn('slow');
+  $('img').fadeOut('slow', function() {
+    $(this).load(mediaItem.url, function() {
+      this.attr('src', mediaItem.url).fadeIn('slow');
+    });
+  });
 
-  $('#js-text').fadeOut('slow', function() {
+  $('#ig_text').fadeOut('slow', function() {
     $(this).empty().append('<p>' + mediaItem.caption + '</p> <small>' + mediaItem.user + '</small>');
   }).fadeIn('slow');
 }

@@ -1,0 +1,53 @@
+* {
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+#ig_form {
+  text-align: center;
+}
+
+#ig_form .hash_label {
+  font-size: 1.5em;
+}
+
+#ig_form input#hash_input {
+  width: 200px;
+  height: 35px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 1.5em;
+  padding: 10px;
+}
+
+#ig_form button {
+  height: 35px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  vertical-align: bottom;
+}
+
+#ig_photo {
+  width: 66.6%;
+  float: left;
+  padding: 10px;
+}
+
+#ig_photo img {
+  width: 100%;
+}
+
+#ig_photo img:-webkit-full-screen, #ig_photo img[src=""] {
+  width: auto;
+}
+
+#ig_text {
+  width: 33.3%;
+  float: left;
+  text-align: justify;
+}
+
+#ig_text p {
+  padding: 10px;
+}

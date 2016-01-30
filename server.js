@@ -22,7 +22,8 @@ app.get('/subscribe', function(req, res) {
     object: 'tag',
     object_id: req.query.tag,
     aspect: 'media',
-    callback_url: 'https://2f0344ee.ngrok.com/callback',
+    // callback_url: 'https://2f0344ee.ngrok.com/callback',
+    callback_url: 'https://real-time-reel.herokuapp.com/callback',
     client_id: process.env.INSTAGRAM_CLIENT_ID,
     client_secret: process.env.INSTAGRAM_CLIENT_SECRET,
     verify_token: VERIFY_TOKEN
