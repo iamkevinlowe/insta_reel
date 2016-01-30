@@ -10,7 +10,7 @@ var tag = null;
 const IntervalTime = 5000;
 const MaxImages = 100;
 
-$('form').submit(function () {
+$('form').submit(function() {
   if (interval) {
     clearInterval(interval);
     socket.emit('delete subscription', subscriptionId);
@@ -36,7 +36,7 @@ function getImages(url, minId) {
   if (url) data.url = url;
   if (minId) data.minTagId = minId;
 
-  $.getJSON('https://2f0344ee.ngrok.com/images', data, function(response) {
+  $.getJSON('/images', data, function(response) {
     var newMediaItems = response.data.map(function(obj) {
       return {
         caption: obj.caption.text,
@@ -64,13 +64,11 @@ function getImages(url, minId) {
 
 function makeSubscription() {
   var data = {tag: tag};
-  $.getJSON('https://2f0344ee.ngrok.com/subscribe', data, response => subscriptionId = response.data.id);
+  $.getJSON('/subscribe', data, response => subscriptionId = response.data.id);
 }
 
 function showNextMediaItem() {
-  if (currentMediaIndex < mediaItems.length) {
-    showItemAtIndex(currentMediaIndex++);
-  }
+  if (currentMediaIndex < mediaItems.length) showItemAtIndex(currentMediaIndex++);
 
   if (currentMediaIndex == MaxImages) {
     mediaItems.sort(createdTime);
