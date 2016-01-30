@@ -1,11 +1,13 @@
 var express = require('express');
+var io = require('socket.io')(http);
+var request = require('request');
+
 var app = express();
 var http = require('http').Server(app);
-var request = require('request');
-var io = require('socket.io')(http);
 
 const VERIFY_TOKEN = Math.random().toString(36).substring(2);
 
+app.set('port', process.env.PORT || 3000);
 app.use(express.static(__dirname + '/styles'));
 app.use(express.static(__dirname + '/scripts'));
 
@@ -51,4 +53,4 @@ io.on('connection', function(socket) {
   socket.on('delete subscription', id => request.del(process.env.INSTAGRAM_URL + '/subscriptions?client_id=' + process.env.INSTAGRAM_CLIENT_ID + '&client_secret=' + process.env.INSTAGRAM_CLIENT_SECRET + '&id=' + id));
 });
 
-http.listen(3000, () => console.log('listening on *:3000'));
+http.listen(app.get('port'), () => console.log('listening on *:' + app.get('port')));
