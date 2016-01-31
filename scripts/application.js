@@ -1,119 +1,142 @@
-var currentMediaIndex = 0;
-var interval = null;
-var mediaItems = [];
-var minTagId = null;
-var nextUrl = null;
-var socket = io();
-var subscriptionId = null;
-var tag = null;
+(function() {
+  var currentMediaIndex = 0;
+  var interval = null;
+  var mediaItems = [];
+  var minTagId = null;
+  var nextUrl = null;
+  var socket = io();
+  var subscriptionId = null;
+  var tag = null;
 
-const IntervalTime = 5000;
-const MaxImages = 100;
+  const INTERVAL_TIME = 5000;
+  const MAX_IMAGES = 100;
 
-document.getElementsByTagName('form')[0].addEventListener('submit', function(e) {
-  e.preventDefault();
+  const IG_FORM = document.getElementById('ig_form');
+  const IG_TAG_INPUT = document.getElementById('tag_input');
+  const IG_IMAGE_CONTAINER = document.getElementById('ig_image_container');
+  const IG_IMAGE = document.getElementById('ig_image');
+  const IG_CAPTION = document.getElementById('ig_caption');
+  const IG_USER = document.getElementById('ig_user');
 
-  if (interval) {
-    clearInterval(interval);
-    socket.emit('delete subscription', subscriptionId);
-    interval = minTagId = nextUrl = subscriptionId = tag = null;
-    mediaItems = [];
-    currentMediaIndex = 0;
-  }
+  IG_FORM.addEventListener('submit', function(e) {
+    e.preventDefault();
 
-  tag = $('#hash_input').val();
+    if (interval) {
+      clearInterval(interval);
+      socket.emit('delete subscription', subscriptionId);
+      interval = minTagId = nextUrl = subscriptionId = tag = null;
+      mediaItems = [];
+      currentMediaIndex = 0;
+    }
 
-  if (tag) {
-    getImages();
-    makeSubscription();    
-  } else {
-    $('img').fadeOut('slow');
-    $('#ig_text').fadeOut('slow');
-  }
-});
+    tag = IG_TAG_INPUT.value;
 
-document.getElementsByTagName('img')[0].addEventListener('click', function(e) {
-  if (this.requestFullScreen) {
-    this.requestFullScreen();
-  } else if (this.msRequestFullscreen) {
-    this.msRequestFullscreen();
-  } else if (this.mozRequestFullScreen) {
-    this.mozRequestFullScreen();
-  } else if (this.webkitRequestFullscreen) {
-    this.webkitRequestFullscreen();
-  }
-});
-
-socket.on('new images', function(response) {
-  getImages(null, minTagId)
-});
-
-window.onbeforeunload = function() {
-  socket.emit('delete subscription', subscriptionId)
-};
-
-function getImages(url, minId) {
-  var data = {tag: tag};
-  if (url) data.url = url;
-  if (minId) data.minTagId = minId;
-
-  $.getJSON('/images', data, function(response) {
-    var newMediaItems = response.data.map(function(obj) {
-      return {
-        caption: obj.caption.text,
-        url: obj.images.standard_resolution.url,
-        user: obj.user.username,
-        created_time: obj.created_time
-      };
-    });
-
-    if (response.pagination.next_url) {
-      mediaItems = mediaItems.concat(newMediaItems);
-      nextUrl = response.pagination.next_url;
+    if (tag) {
+      getImages();
+      makeSubscription();    
     } else {
-      mediaItems = mediaItems.splice(0, currentMediaIndex).concat(newMediaItems).concat(mediaItems);
-    }
-
-    minTagId = response.pagination.min_tag_id;
-
-    if (interval == null) {
-      showNextMediaItem();
-      interval = setInterval(showNextMediaItem, IntervalTime);
+      IG_IMAGE.style.opacity = IG_CAPTION.style.opacity = IG_USER.style.opacity = 0;
     }
   });
-}
 
-function makeSubscription() {
-  var data = {tag: tag};
-  $.getJSON('/subscribe', data, function(response) {
-    subscriptionId = response.data.id;
+  IG_IMAGE_CONTAINER.addEventListener('click', function(e) {
+    if (this.requestFullScreen) {
+      this.requestFullScreen();
+    } else if (this.msRequestFullscreen) {
+      this.msRequestFullscreen();
+    } else if (this.mozRequestFullScreen) {
+      this.mozRequestFullScreen();
+    } else if (this.webkitRequestFullscreen) {
+      this.webkitRequestFullscreen();
+    }
   });
-}
 
-function showNextMediaItem() {
-  if (currentMediaIndex < mediaItems.length) showItemAtIndex(currentMediaIndex++);
+  socket.on('new images', function(response) {
+    getImages(null, minTagId)
+  });
 
-  if (currentMediaIndex == MaxImages) {
-    mediaItems.sort(createdTime);
-    currentMediaIndex = 0;
-  } else if (currentMediaIndex == mediaItems.length - 1) {
-    getImages(nextUrl);
+  window.onbeforeunload = function() {
+    socket.emit('delete subscription', subscriptionId)
+  };
+
+  function getImages(url, minId) {
+    var queryString = "?tag=" + tag;
+    if (url) queryString += "&url=" + url;
+    if (minId) queryString += "&minTagId=" + minId;
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/images' + queryString);
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        var response = JSON.parse(xhr.response);
+        var newMediaItems = response.data.map(function(obj) {
+          return {
+            caption: obj.caption.text,
+            url: obj.images.standard_resolution.url,
+            user: obj.user.username,
+            created_time: obj.created_time
+          };
+        });
+
+        if (response.pagination.next_url) {
+          mediaItems = mediaItems.concat(newMediaItems);
+          nextUrl = response.pagination.next_url;
+        } else {
+          mediaItems = mediaItems.splice(0, currentMediaIndex).concat(newMediaItems).concat(mediaItems);
+        }
+
+        minTagId = response.pagination.min_tag_id;
+
+        if (interval == null) {
+          showNextMediaItem();
+          interval = setInterval(showNextMediaItem, INTERVAL_TIME);
+        }
+      }
+    };
+    xhr.send();
   }
-}
 
-function showItemAtIndex(index) {
-  var mediaItem = mediaItems[index];
-  $('img').fadeOut('slow', function() {
-    $(this).attr('src', mediaItem.url).load(function() {
-      $(this).fadeIn('slow');
-    });
-  });
+  function makeSubscription() {
+    var queryString = "?tag=" + tag;
 
-  $('#ig_text').fadeOut('slow', function() {
-    $(this).empty().append('<p>' + mediaItem.caption + '</p> <small>' + mediaItem.user + '</small>');
-  }).fadeIn('slow');
-}
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/subscribe' + queryString);
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        var response = JSON.parse(xhr.response);
+        if (response.data) subscriptionId = response.data.id;
+      }
+    };
+    xhr.send();
+  }
 
-function createdTime(a, b) {
-  return a.created_time > b.created_time ? -1 : a.created_time < b.created_time ? 1 : 0;
-}
+  function showNextMediaItem() {
+    if (currentMediaIndex < mediaItems.length) showItemAtIndex(currentMediaIndex++);
+
+    if (currentMediaIndex == MAX_IMAGES) {
+      mediaItems.sort(createdTime);
+      mediaItems.splice(MAX_IMAGES);
+      currentMediaIndex = 0;
+    } else if (currentMediaIndex == mediaItems.length - 1) {
+      getImages(nextUrl);
+    }
+  }
+
+  function showItemAtIndex(index) {
+    var mediaItem = mediaItems[index];
+
+    IG_IMAGE.style.opacity = IG_CAPTION.style.opacity = IG_USER.style.opacity = 0;
+    setTimeout(function() {
+      IG_IMAGE.setAttribute('src', mediaItem.url);
+      IG_CAPTION.textContent = mediaItem.caption;
+      IG_USER.textContent = mediaItem.user;
+      IG_IMAGE.onload = function() {
+        IG_IMAGE.style.opacity = IG_CAPTION.style.opacity = IG_USER.style.opacity = 1;
+      }
+    }, 1000);
+  }
+
+  function createdTime(a, b) {
+    return a.created_time > b.created_time ? -1 : a.created_time < b.created_time ? 1 : 0;
+  }
+})();

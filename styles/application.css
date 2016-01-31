@@ -1,5 +1,7 @@
 * {
+  box-sizing: border-box;
   -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   font-family: sans-serif;
 }
@@ -8,21 +10,21 @@ body {
   margin: 0;
 }
 
-#ig_form {
+#ig_form_container {
   background-color: #f8f8f8;
   padding: 10px;
 }
 
-#ig_form * {
+#ig_form_container * {
   text-align: center;
   color: #aaa;
 }
 
-#ig_form .hash_label {
+#ig_form_container .tag_label {
   font-size: 1.5em;
 }
 
-#ig_form input#hash_input {
+#ig_form_container input#tag_input {
   width: 200px;
   height: 35px;
   border-radius: 5px;
@@ -30,7 +32,7 @@ body {
   font-size: 1.5em;
 }
 
-#ig_form button {
+#ig_form_container button {
   height: 35px;
   border-radius: 5px;
   border: 1px solid #ddd;
@@ -38,30 +40,97 @@ body {
   vertical-align: bottom;
 }
 
-#ig_photo {
-  width: 66.6%;
-  float: left;
+#ig_image_container {
   padding: 10px;
+  text-align: center;
 }
 
-#ig_photo img {
+#ig_image_container:not(:fullscreen) {
+  width: 66.6%;
+  position: absolute;
+  left: 0;
+}
+
+#ig_image_container:not(:-moz-full-screen) {
+  width: 66.6%;
+  position: absolute;
+  left: 0;
+}
+
+#ig_image_container:not(:-ms-fullscreen) {
+  width: 66.6%;
+  position: absolute;
+  left: 0;
+}
+
+#ig_image_container:not(:-webkit-full-screen) {
+  width: 66.6%;
+  position: absolute;
+  left: 0;
+}
+
+#ig_image_container:fullscreen {
   width: 100%;
+  height: 100%;
+  background-color: #fff;
 }
 
-#ig_photo img[src=""] {
-  width: 0;
+#ig_image_container:-moz-full-screen {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
 }
 
-#ig_photo img:-webkit-full-screen {
+#ig_image_container:-ms-fullscreen {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+}
+
+#ig_image_container:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+}
+
+#ig_image_container:fullscreen #ig_image {
+  height: 100%;
   width: auto;
 }
 
-#ig_text {
-  width: 33.3%;
-  float: left;
-  text-align: justify;
+#ig_image_container:-moz-full-screen #ig_image {
+  height: 100%;
+  width: auto;
 }
 
-#ig_text p {
+#ig_image_container:-ms-fullscreen #ig_image {
+  height: 5100%;
+  width: auto;
+}
+
+#ig_image_container:-webkit-full-screen #ig_image {
+  height: 100%;
+  width: auto;
+}
+
+#ig_image_container #ig_image {
+  width: 100%;
+  cursor: pointer;
+}
+
+#ig_image_container #ig_image[src=""] {
+  display: none;
+  opacity: 0;
+}
+
+#ig_text_container {
+  width: 33.3%;
   padding: 10px;
+  position: absolute;
+  right: 0;
+  text-align: right;
+}
+
+#ig_image_container #ig_image, #ig_text_container #ig_caption, #ig_text_container #ig_user {
+  transition: all 1s ease;
 }
