@@ -44,9 +44,13 @@ document.getElementsByTagName('img')[0].addEventListener('click', function(e) {
   }
 });
 
-socket.on('new images', response => { getImages(null, minTagId) });
+socket.on('new images', function(response) {
+  getImages(null, minTagId)
+});
 
-window.onbeforeunload = () => { socket.emit('delete subscription', subscriptionId) };
+window.onbeforeunload = function() {
+  socket.emit('delete subscription', subscriptionId)
+};
 
 function getImages(url, minId) {
   var data = {tag: tag};
@@ -81,7 +85,9 @@ function getImages(url, minId) {
 
 function makeSubscription() {
   var data = {tag: tag};
-  $.getJSON('/subscribe', data, response => subscriptionId = response.data.id);
+  $.getJSON('/subscribe', data, function(response) {
+    subscriptionId = response.data.id;
+  });
 }
 
 function showNextMediaItem() {
@@ -98,7 +104,9 @@ function showNextMediaItem() {
 function showItemAtIndex(index) {
   var mediaItem = mediaItems[index];
   $('img').fadeOut('slow', function() {
-    $(this).attr('src', mediaItem.url).load(() => $(this).fadeIn('slow'));
+    $(this).attr('src', mediaItem.url).load(function() {
+      $(this).fadeIn('slow');
+    });
   });
 
   $('#ig_text').fadeOut('slow', function() {

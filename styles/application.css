@@ -1,4 +1,5 @@
 * {
+  -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   font-family: sans-serif;
 }
@@ -27,7 +28,6 @@ body {
   border-radius: 5px;
   border: 1px solid #ddd;
   font-size: 1.5em;
-  padding: 10px;
 }
 
 #ig_form button {
@@ -48,8 +48,11 @@ body {
   width: 100%;
 }
 
+#ig_photo img[src=""] {
+  width: 0;
+}
 
-#ig_photo img:-webkit-full-screen, #ig_photo img[src=""] {
+#ig_photo img:-webkit-full-screen {
   width: auto;
 }
 
@@ -61,8 +64,4 @@ body {
 
 #ig_text p {
   padding: 10px;
-}
-
-html:-webkit-full-screen {
-  background: white;
 }
