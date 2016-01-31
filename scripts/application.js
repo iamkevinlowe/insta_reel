@@ -98,9 +98,7 @@ function showNextMediaItem() {
 function showItemAtIndex(index) {
   var mediaItem = mediaItems[index];
   $('img').fadeOut('slow', function() {
-    $(this).load(mediaItem.url, function() {
-      this.attr('src', mediaItem.url).fadeIn('slow');
-    });
+    $(this).attr('src', mediaItem.url).load(() => $(this).fadeIn('slow'));
   });
 
   $('#ig_text').fadeOut('slow', function() {

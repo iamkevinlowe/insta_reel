@@ -1,10 +1,20 @@
 * {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   font-family: sans-serif;
 }
 
+body {
+  margin: 0;
+}
+
 #ig_form {
+  background-color: #f8f8f8;
+  padding: 10px;
+}
+
+#ig_form * {
   text-align: center;
+  color: #aaa;
 }
 
 #ig_form .hash_label {
@@ -38,6 +48,7 @@
   width: 100%;
 }
 
+
 #ig_photo img:-webkit-full-screen, #ig_photo img[src=""] {
   width: auto;
 }
@@ -50,4 +61,8 @@
 
 #ig_text p {
   padding: 10px;
+}
+
+html:-webkit-full-screen {
+  background: white;
 }
