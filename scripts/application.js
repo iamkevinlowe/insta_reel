@@ -77,6 +77,7 @@
     xhr.onload = function() {
       if (xhr.status === 200) {
         var response = JSON.parse(xhr.response);
+        console.log(response);
         if (response.data) instagram.subscriptionId = parseInt(response.data.id);
       }
     };
@@ -96,7 +97,6 @@
   }
 
   function showItemAtIndex(index) {
-    console.log(index);
     var mediaItem = instagram.mediaItems[index];
 
     IG_IMAGE.style.opacity = IG_CAPTION.style.opacity = IG_USER.style.opacity = 0;
