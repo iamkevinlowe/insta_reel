@@ -32,6 +32,26 @@ body {
   font-size: 1.5em;
 }
 
+#ig_form_container ::placeholder {
+  color: #dfdfdf;
+}
+
+#ig_form_container :-moz-placeholder {
+  color: #dfdfdf;
+}
+
+#ig_form_container ::-moz-placeholder {
+  color: #dfdfdf;
+}
+
+#ig_form_container :-ms-input-placeholder {
+  color: #dfdfdf;
+}
+
+#ig_form_container ::-webkit-input-placeholder {
+  color: #dfdfdf;
+}
+
 #ig_form_container button {
   height: 35px;
   border-radius: 5px;

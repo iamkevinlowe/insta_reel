@@ -13,8 +13,9 @@ app.use(express.static(__dirname + '/scripts'));
 app.get('/', (req, res) => res.sendFile(__dirname + '/views/index.html'));
 
 app.get('/images', function(req, res) {
-  var url = req.query.url ? req.query.url : process.env.INSTAGRAM_URL + '/tags/' + req.query.tag + '/media/recent?client_id=' + process.env.INSTAGRAM_CLIENT_ID;
+  var url = process.env.INSTAGRAM_URL + '/tags/' + req.query.tag + '/media/recent?client_id=' + process.env.INSTAGRAM_CLIENT_ID;
   if (req.query.minTagId) url += '&min_tag_id=' + req.query.minTagId;
+  if (req.query.maxTagId) url += '&max_tag_id=' + req.query.maxTagId;
   request.get(url, (error, response, body) => error ? console.error('Error: ', error) : res.send(body));
 });
 
@@ -42,12 +43,18 @@ app.get('/callback', function(req, res) {
 });
 
 app.post('/callback', function(req, res) {
-  io.emit('new images', {});
-  res.send({});
+  body = '';
+  req.on('data', function(d) {
+    body += d;
+  });
+  req.on('end', function() {
+    var response = JSON.parse(body)[0];
+    io.emit('incoming', response);
+  });
+  res.end();
 });
 
 io.on('connection', function(socket) {
-  socket.on('new images', response => io.emit('new images', response));
   socket.on('delete subscription', id => request.del(process.env.INSTAGRAM_URL + '/subscriptions?client_id=' + process.env.INSTAGRAM_CLIENT_ID + '&client_secret=' + process.env.INSTAGRAM_CLIENT_SECRET + '&id=' + id));
 });
 

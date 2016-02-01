@@ -1,14 +1,10 @@
 (function() {
-  var currentMediaIndex = 0;
-  var interval = null;
-  var mediaItems = [];
-  var minTagId = null;
-  var nextUrl = null;
-  var socket = io();
-  var subscriptionId = null;
-  var tag = null;
+  var instagram = {
+    currentMediaIndex: 0,
+    mediaItems: []
+  };
 
-  const INTERVAL_TIME = 5000;
+  const INTERVAL_TIME = 2000;
   const MAX_IMAGES = 100;
 
   const IG_FORM = document.getElementById('ig_form');
@@ -21,17 +17,11 @@
   IG_FORM.addEventListener('submit', function(e) {
     e.preventDefault();
 
-    if (interval) {
-      clearInterval(interval);
-      socket.emit('delete subscription', subscriptionId);
-      interval = minTagId = nextUrl = subscriptionId = tag = null;
-      mediaItems = [];
-      currentMediaIndex = 0;
-    }
+    if (instagram.interval) resetSlideshow();
 
-    tag = IG_TAG_INPUT.value;
+    instagram.tag = IG_TAG_INPUT.value;
 
-    if (tag) {
+    if (instagram.tag) {
       getImages();
       makeSubscription();    
     } else {
@@ -51,17 +41,19 @@
     }
   });
 
-  socket.on('new images', function(response) {
-    getImages(null, minTagId)
+  socket.on('incoming', function(response) {
+    if (response.object_id === instagram.tag && response.subscription_id === instagram.subscriptionId) {
+      getImages(null, instagram.minTagId);
+    }
   });
 
   window.onbeforeunload = function() {
-    socket.emit('delete subscription', subscriptionId)
+    socket.emit('delete subscription', instagram.subscriptionId);
   };
 
-  function getImages(url, minId) {
-    var queryString = "?tag=" + tag;
-    if (url) queryString += "&url=" + url;
+  function getImages(maxId, minId) {
+    var queryString = "?tag=" + instagram.tag;
+    if (maxId) queryString += "&maxTagId=" + maxId;
     if (minId) queryString += "&minTagId=" + minId;
 
     var xhr = new XMLHttpRequest();
@@ -69,61 +61,41 @@
     xhr.onload = function() {
       if (xhr.status === 200) {
         var response = JSON.parse(xhr.response);
-        var newMediaItems = response.data.map(function(obj) {
-          return {
-            caption: obj.caption.text,
-            url: obj.images.standard_resolution.url,
-            user: obj.user.username,
-            created_time: obj.created_time
-          };
-        });
-
-        if (response.pagination.next_url) {
-          mediaItems = mediaItems.concat(newMediaItems);
-          nextUrl = response.pagination.next_url;
-        } else {
-          mediaItems = mediaItems.splice(0, currentMediaIndex).concat(newMediaItems).concat(mediaItems);
-        }
-
-        minTagId = response.pagination.min_tag_id;
-
-        if (interval == null) {
-          showNextMediaItem();
-          interval = setInterval(showNextMediaItem, INTERVAL_TIME);
-        }
+        if (response.data.length > 0) insertMedia(response);        
       }
     };
     xhr.send();
   }
 
   function makeSubscription() {
-    var queryString = "?tag=" + tag;
+    var queryString = "?tag=" + instagram.tag;
 
     var xhr = new XMLHttpRequest();
     xhr.open('GET', '/subscribe' + queryString);
     xhr.onload = function() {
       if (xhr.status === 200) {
         var response = JSON.parse(xhr.response);
-        if (response.data) subscriptionId = response.data.id;
+        if (response.data) instagram.subscriptionId = parseInt(response.data.id);
       }
     };
     xhr.send();
   }
 
   function showNextMediaItem() {
-    if (currentMediaIndex < mediaItems.length) showItemAtIndex(currentMediaIndex++);
+    if (instagram.currentMediaIndex < instagram.mediaItems.length) showItemAtIndex(instagram.currentMediaIndex++);
 
-    if (currentMediaIndex == MAX_IMAGES) {
-      mediaItems.sort(createdTime);
-      mediaItems.splice(MAX_IMAGES);
-      currentMediaIndex = 0;
-    } else if (currentMediaIndex == mediaItems.length - 1) {
-      getImages(nextUrl);
+    if (instagram.currentMediaIndex == MAX_IMAGES) {
+      instagram.mediaItems.sort(createdTime);
+      instagram.mediaItems.splice(MAX_IMAGES);
+      instagram.currentMediaIndex = 0;
+    } else if (instagram.currentMediaIndex == instagram.mediaItems.length - 1) {
+      getImages(instagram.maxTagId);
     }
   }
 
   function showItemAtIndex(index) {
-    var mediaItem = mediaItems[index];
+    console.log(index);
+    var mediaItem = instagram.mediaItems[index];
 
     IG_IMAGE.style.opacity = IG_CAPTION.style.opacity = IG_USER.style.opacity = 0;
     setTimeout(function() {
@@ -134,6 +106,40 @@
         IG_IMAGE.style.opacity = IG_CAPTION.style.opacity = IG_USER.style.opacity = 1;
       }
     }, 1000);
+  }
+
+  function insertMedia(response) {
+    var newMediaItems = response.data.map(function(obj) {
+      return {
+        caption: obj.caption ? obj.caption.text : '',
+        url: obj.images.standard_resolution.url,
+        user: obj.user.username,
+        created_time: obj.created_time
+      };
+    });
+    
+    if (response.pagination.next_max_tag_id) {
+      instagram.mediaItems = instagram.mediaItems.concat(newMediaItems);
+      instagram.maxTagId = response.pagination.next_max_tag_id;
+      if (!instagram.minTagId) instagram.minTagId = response.pagination.min_tag_id;
+    } else {
+      instagram.mediaItems = instagram.mediaItems.splice(0, instagram.currentMediaIndex).concat(newMediaItems).concat(instagram.mediaItems);
+      instagram.minTagId = response.pagination.min_tag_id;
+    }
+
+    if (!instagram.interval) {
+      showNextMediaItem();
+      instagram.interval = setInterval(showNextMediaItem, INTERVAL_TIME);
+    }
+  }
+
+  function resetSlideshow() {
+    clearInterval(instagram.interval);
+    socket.emit('delete subscription', subscriptionId);
+    instagram = {
+      currentMediaIndex: 0,
+      mediaItems: []
+    };
   }
 
   function createdTime(a, b) {
