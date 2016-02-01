@@ -4,7 +4,7 @@
     mediaItems: []
   };
 
-  const INTERVAL_TIME = 2000;
+  const INTERVAL_TIME = 5000;
   const MAX_IMAGES = 100;
 
   const IG_FORM = document.getElementById('ig_form');
