@@ -77,7 +77,6 @@
     xhr.onload = function() {
       if (xhr.status === 200) {
         var response = JSON.parse(xhr.response);
-        console.log(response);
         if (response.data) instagram.subscriptionId = parseInt(response.data.id);
       }
     };

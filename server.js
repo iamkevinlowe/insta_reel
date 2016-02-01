@@ -24,7 +24,7 @@ app.get('/subscribe', function(req, res) {
     object: 'tag',
     object_id: req.query.tag,
     aspect: 'media',
-    callback_url: process.env.NGROK + '/callback' || req.protocol + '://' + req.get('host') + '/callback',
+    callback_url: req.protocol + '://' + req.get('host') + '/callback',
     client_id: process.env.INSTAGRAM_CLIENT_ID,
     client_secret: process.env.INSTAGRAM_CLIENT_SECRET,
     verify_token: VERIFY_TOKEN
