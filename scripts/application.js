@@ -4,6 +4,8 @@
     mediaItems: []
   };
 
+  var socket = io();
+
   const INTERVAL_TIME = 5000;
   const MAX_IMAGES = 100;
 
