@@ -154,3 +154,65 @@ body {
 #ig_image_container #ig_image, #ig_text_container #ig_caption, #ig_text_container #ig_user {
   transition: all 1s ease;
 }
+
+@media only screen and (max-width: 768px) {
+  #ig_image_container:not(:fullscreen) {
+    width: 100%;
+    position: static;
+  }
+
+  #ig_image_container:not(:-moz-full-screen) {
+    width: 100%;
+    position: static;
+  }
+
+  #ig_image_container:not(:-ms-fullscreen) {
+    width: 100%;
+    position: static;
+  }
+
+  #ig_image_container:not(:-webkit-full-screen) {
+    width: 100%;
+    position: static;
+  }
+
+  #ig_text_container {
+    width: 100%;
+    position: static;
+    text-align: center;
+  }
+}
+
+@media only screen and (max-width: 768px) and (orientation: portrait) {
+  #ig_image_container:fullscreen #ig_image {
+    height: auto;
+    width: 100%;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  #ig_image_container:-moz-full-screen #ig_image {
+    height: auto;
+    width: 100%;
+    position: relative;
+    top: 50%;
+    -moz-transform: translateY(-50%);
+  }
+
+  #ig_image_container:-ms-fullscreen #ig_image {
+    height: auto;
+    width: 100%;
+    position: relative;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+  }
+
+  #ig_image_container:-webkit-full-screen #ig_image {
+    height: auto;
+    width: 100%;
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+  }
+}
