@@ -81,6 +81,8 @@
       }
     };
     xhr.send();
+
+    blocmetrics.report('Subscription made')
   }
 
   function showNextMediaItem() {
