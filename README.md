@@ -1,4 +1,4 @@
-# Insta Reel
+# Real Time Reel
 
 A real-time Instagram slideshow built with [Node.js](https://nodejs.org/en/) and [Socket.io](http://socket.io/).
 
