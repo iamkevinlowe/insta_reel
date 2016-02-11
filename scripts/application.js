@@ -138,7 +138,7 @@
 
   function resetSlideshow() {
     clearInterval(instagram.interval);
-    socket.emit('delete subscription', subscriptionId);
+    socket.emit('delete subscription', instagram.subscriptionId);
     instagram = {
       currentMediaIndex: 0,
       mediaItems: []
