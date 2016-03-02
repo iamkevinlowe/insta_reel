@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "Live updating Socket.io app",
   "dependencies": {
+    "cookie-parser": "^1.4.1",
     "express": "^4.13.4",
+    "express-session": "^1.13.0",
     "foreman": "^1.4.1",
     "request": "^2.69.0",
     "socket.io": "^1.4.5"
