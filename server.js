@@ -19,7 +19,7 @@ app.get('/', function(req, res) {
   if (req.session.access_token) {
     res.sendFile(__dirname + '/views/index.html');
   } else {
-    res.redirect('https://api.instagram.com/oauth/authorize?client_id=' + process.env.INSTAGRAM_CLIENT_ID + '&redirect_uri=http://localhost:5000/auth&response_type=code');
+    res.redirect('https://api.instagram.com/oauth/authorize?client_id=' + process.env.INSTAGRAM_CLIENT_ID + '&redirect_uri=http://real-time-reel.herokuapp.com/auth&response_type=code');
   }
 });
 
