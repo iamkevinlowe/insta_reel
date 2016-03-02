@@ -7,24 +7,30 @@
   </head>
 
   <body>
-    <div id="ig_form_container">
-      <h2>Enter a Hashtag:</h2>
-      <form id="ig_form" action="">
-        <span class="tag_label">#</span>
-        <input type="text" id="tag_input" autocomplete="off" pattern="^[a-zA-Z]\w+" placeholder="hubble">
-        <button>Submit</button>
-      </form>
+    <div class="wrapper">
+      <div id="ig_form_container">
+        <h2>Enter a Hashtag:</h2>
+        <form id="ig_form" action="">
+          <span class="tag_label">#</span>
+          <input type="text" id="tag_input" autocomplete="off" pattern="^[a-zA-Z]\w+" placeholder="hubble">
+          <button>Submit</button>
+        </form>
+      </div>
+
+      <div id="ig_image_container">
+        <img id="ig_image" src="">
+      </div>
+
+      <div id="ig_text_container">
+        <p id="ig_caption"></p>
+        <small id="ig_user"></small>
+      </div>
+
+      <footer>
+        <a target="_blank" href="http://privacypolicies.com/privacy/view/h0eJRD">Privacy policy</a>
+      </footer>
     </div>
 
-    <div id="ig_image_container">
-      <img id="ig_image" src="">
-    </div>
-
-    <div id="ig_text_container">
-      <p id="ig_caption"></p>
-      <small id="ig_user"></small>
-    </div>
-    
     <script src="/socket.io/socket.io.js"></script>
     <script src="blocmetrics.js" type="text/javascript"></script>
     <script src="application.js" type="text/javascript"></script>

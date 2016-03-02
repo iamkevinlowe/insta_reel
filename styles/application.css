@@ -183,6 +183,23 @@ body {
   }
 }
 
+.wrapper {
+  min-height: 100%;
+  position: relative;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: 0.5rem;
+}
+
+footer a {
+  text-decoration: none;
+  color: #dfdfdf;
+}
+
 @media only screen and (max-width: 768px) and (orientation: portrait) {
   #ig_image_container:fullscreen #ig_image {
     height: auto;

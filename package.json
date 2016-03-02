@@ -1,5 +1,5 @@
 {
-  "name": "insta_reel",
+  "name": "real-time-reel",
   "version": "0.0.1",
   "description": "Live updating Socket.io app",
   "dependencies": {
